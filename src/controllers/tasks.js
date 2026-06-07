@@ -35,12 +35,17 @@ const validateDone = (done) => {
   return { valid: true, value: done };
 };
 
+const handleServerError = (res, error, context) => {
+  console.error(`Task controller error during ${context}:`, error);
+  res.status(500).json({ message: 'Internal server error' });
+};
+
 const getAllTasks = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM tasks');
     res.status(200).json(result.rows);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    handleServerError(res, error, 'getAllTasks');
   }
 };
 
@@ -64,7 +69,7 @@ const createTask = async (req, res) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    handleServerError(res, error, 'createTask');
   }
 };
 
@@ -88,7 +93,7 @@ const getTaskById = async (req, res) => {
 
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    handleServerError(res, error, 'getTaskById');
   }
 };
 
@@ -135,7 +140,7 @@ const updateTask = async (req, res) => {
 
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    handleServerError(res, error, 'updateTask');
   }
 };
 
@@ -164,7 +169,7 @@ const deleteTask = async (req, res) => {
 
     res.status(200).json({ message: 'Task deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    handleServerError(res, error, 'deleteTask');
   }
 };
 
